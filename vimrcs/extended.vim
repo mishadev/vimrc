@@ -127,7 +127,7 @@ func! DeleteTillSlash()
         else
             let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
         endif
-    endif   
+    endif
 
     return g:cmd_edited
 endfunc
@@ -135,3 +135,46 @@ endfunc
 func! CurrentFileDir(cmd)
     return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
+
+" extra peace
+
+hi Identifier ctermfg=49
+hi Function ctermfg=51
+hi ExtraWhitespace ctermbg=159
+
+augroup WhitespaceMatch
+  " Remove ALL autocommands for the WhitespaceMatch group.
+  autocmd!
+  autocmd BufWinEnter * let w:whitespace_match_number =
+       \ matchadd('ExtraWhitespace', '\s\+$')
+  autocmd InsertEnter * call s:ToggleWhitespaceMatch('i')
+  autocmd InsertLeave * call s:ToggleWhitespaceMatch('n')
+augroup END
+function! s:ToggleWhitespaceMatch(mode)
+  let pattern = (a:mode == 'i') ? '\s\+\%#\@<!$' : '\s\+$'
+  if exists('w:whitespace_match_number')
+    call matchdelete(w:whitespace_match_number)
+    call matchadd('ExtraWhitespace', pattern, 10, w:whitespace_match_number)
+  else
+    " Something went wrong, try to be graceful.
+    let w:whitespace_match_number =  matchadd('ExtraWhitespace', pattern)
+  endif
+endfunction
+
+nmap <F8> :TagbarOpenAutoClose<CR>
+nmap <C-a> :w<CR>
+imap <C-a> <ESC>:w<CR>
+nmap <leader>pp viw"0p
+nmap <CR> o<Esc>k
+nmap <S-CR> O<Esc>j
+nmap <leader><space> a<space><Esc>
+nnoremap * :keepjumps normal! mf*`f<CR>
+command Q q
+nnoremap <silent> <leader>[ :vertical resize +20<CR>
+nnoremap <silent> <leader>] :vertical resize -20<CR>
+nnoremap <silent> <leader>= mpggVG=`pzz
+map q: <Nop>
+nnoremap Q <nop>
+map <ALT-h> <C-d>
+map <ALT-k> <C-u>
+
