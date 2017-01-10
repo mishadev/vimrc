@@ -178,3 +178,6 @@ nnoremap Q <nop>
 map <ALT-h> <C-d>
 map <ALT-k> <C-u>
 
+set foldlevelstart=20
+set number
+set relativenumber
