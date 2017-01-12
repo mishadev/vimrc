@@ -140,7 +140,7 @@ endfunc
 
 hi Identifier ctermfg=49
 hi Function ctermfg=51
-hi ExtraWhitespace ctermbg=159
+hi ExtraWhitespace ctermbg=9
 
 augroup WhitespaceMatch
   " Remove ALL autocommands for the WhitespaceMatch group.
@@ -181,3 +181,5 @@ map <ALT-k> <C-u>
 set foldlevelstart=20
 set number
 set relativenumber
+set autoread
+:au CursorHold,CursorHoldI * checktime
