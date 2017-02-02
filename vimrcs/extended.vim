@@ -179,11 +179,20 @@ map <ALT-h> <C-d>
 map <ALT-k> <C-u>
 
 set autoread
-:au CursorHold,CursorHoldI * checktime
+au CursorHold,CursorHoldI * checktime
 
-:set cursorline
-:hi CursorLine guifg=NONE guibg=#232839 gui=NONE ctermfg=NONE ctermbg=0 cterm=NONE
-:nnoremap <Leader>c :set cursorline!<CR>
+nnoremap <S-j> :m .+1<CR>==
+nnoremap <S-k> :m .-2<CR>==
+
+inoremap <S-j> <Esc>:m .+1<CR>==gi
+inoremap <S-k> <Esc>:m .-2<CR>==gi
+
+vnoremap <S-j> :m '>+1<CR>gv=gv
+vnoremap <S-k> :m '<-2<CR>gv=gv
+
+set cursorline
+hi CursorLine guifg=NONE guibg=#232839 gui=NONE ctermfg=NONE ctermbg=0 cterm=NONE
+nnoremap <Leader>c :set cursorline!<CR>
 
 augroup CursorLine
     au!
