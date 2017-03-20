@@ -179,6 +179,12 @@ map <ALT-h> <C-d>
 map <ALT-k> <C-u>
 inoremap <Nul> <C-n>
 
+set pastetoggle=<Leader>v
+
+set nolist
+set listchars=tab:>-,trail:~,extends:>,precedes:<,space:·
+noremap <Leader>x :set list!<CR>
+
 set autoread
 au CursorHold,CursorHoldI * checktime
 
