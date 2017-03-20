@@ -181,9 +181,13 @@ inoremap <Nul> <C-n>
 
 set pastetoggle=<Leader>v
 
-set nolist
+set list
 set listchars=tab:>-,trail:~,extends:>,precedes:<,space:·
+hi SpecialKey guifg=#232839 guibg=NONE gui=NONE ctermfg=0 ctermbg=NONE cterm=NONE
 noremap <Leader>x :set list!<CR>
+
+noremap <silent> <Leader>df :NERDTreeClose<CR> :windo :diffthis<CR>
+noremap <silent> <Leader>fd :NERDTreeToggle<CR> :windo :diffoff<CR>
 
 set autoread
 au CursorHold,CursorHoldI * checktime
