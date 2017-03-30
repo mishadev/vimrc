@@ -186,6 +186,11 @@ set listchars=tab:>-,trail:~,extends:>,precedes:<,space:·
 hi SpecialKey guifg=#232839 guibg=NONE gui=NONE ctermfg=0 ctermbg=NONE cterm=NONE
 noremap <Leader>x :set list!<CR>
 
+hi DiffAdd guifg=bg guibg=Red gui=NONE term=BOLD ctermfg=11 ctermbg=17
+hi DiffDelete guifg=bg guibg=Red gui=NONE cterm=bold ctermfg=11 ctermbg=17
+hi DiffChange guifg=bg guibg=Red gui=NONE cterm=bold ctermfg=11 ctermbg=17
+hi DiffText guifg=bg guibg=Red gui=NONE cterm=bold ctermfg=11 ctermbg=88
+
 noremap <silent> <Leader>df :NERDTreeClose<CR> :windo :diffthis<CR>
 noremap <silent> <Leader>fd :NERDTreeToggle<CR> :windo :diffoff<CR>
 
