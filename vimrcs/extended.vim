@@ -181,7 +181,7 @@ inoremap <Nul> <C-n>
 
 set pastetoggle=<Leader>v
 
-set list
+set nolist
 set listchars=tab:>-,trail:~,extends:>,precedes:<,space:·
 hi SpecialKey guifg=#232839 guibg=NONE gui=NONE ctermfg=0 ctermbg=NONE cterm=NONE
 noremap <Leader>x :set list!<CR>
