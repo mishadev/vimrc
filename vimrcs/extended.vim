@@ -207,12 +207,6 @@ set cursorline
 hi CursorLine guifg=NONE guibg=#232839 gui=NONE ctermfg=NONE ctermbg=0 cterm=NONE
 nnoremap <Leader>c :set cursorline!<CR>
 
-augroup CursorLine
-    au!
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
-
 set foldlevelstart=20
 set number
 set relativenumber
