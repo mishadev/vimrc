@@ -207,6 +207,7 @@ set cursorline
 hi CursorLine guifg=NONE guibg=#232839 gui=NONE ctermfg=NONE ctermbg=0 cterm=NONE
 nnoremap <Leader>c :set cursorline!<CR>
 
+set nowrap
 set foldlevelstart=20
 set number
 set relativenumber
