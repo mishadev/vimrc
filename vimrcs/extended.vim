@@ -168,7 +168,6 @@ nmap <CR> o<Esc>k
 nmap <S-CR> O<Esc>j
 nmap <leader><space> a<space><Esc>
 nnoremap * :keepjumps normal! mf*`f<CR>
-command Q q
 nnoremap <silent> <leader>[ :vertical resize +20<CR>
 nnoremap <silent> <leader>] :vertical resize -20<CR>
 nnoremap <silent> <leader>= mpggVG=`pzz
@@ -213,3 +212,7 @@ set nowrap
 set foldlevelstart=20
 set number
 set relativenumber
+
+vnoremap <C-C> :w !xsel -i -b<CR><CR>
+vnoremap <C-V> :r !xsel -o -b<CR><CR>
+noremap <silent> <Leader>r :so $MYVIMRC<CR>
