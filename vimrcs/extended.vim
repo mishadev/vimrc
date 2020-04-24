@@ -211,8 +211,11 @@ vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 set nowrap
 set foldlevelstart=20
 set number
-set relativenumber
+" set relativenumber
 
 vnoremap <C-C> :w !xsel -i -b<CR><CR>
 vnoremap <C-V> :r !xsel -o -b<CR><CR>
 noremap <silent> <Leader>r :so $MYVIMRC<CR>
+
+hi Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
+hi Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
