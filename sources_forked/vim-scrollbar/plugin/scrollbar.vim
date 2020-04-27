@@ -12,6 +12,8 @@ if exists('g:loaded_scrollbar')
     finish
 endif
 let g:loaded_scrollbar=1
+let g:sign_id=3
+let g:sign_thumb_name="ScrollbarThumb"
 
 " Save cpoptions.
 let s:save_cpoptions=&cpoptions
@@ -23,17 +25,12 @@ set cpoptions&vim
 if !exists('g:scrollbar_thumb')
     let g:scrollbar_thumb='#'
 endif
-if !exists('g:scrollbar_clear')
-    let g:scrollbar_clear='|'
-endif
 
 " Set highlighting scheme. (User can override these!)
-highlight Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
-highlight Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
+highlight Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=black guibg=black cterm=reverse
 
 " Set signs we're goint to use. http://vimdoc.sourceforge.net/htmldoc/sign.html
-exec "sign define sbclear text=".g:scrollbar_clear." texthl=Scrollbar_Clear"
-exec "sign define sbthumb text=".g:scrollbar_thumb." texthl=Scrollbar_Thumb"
+exec "sign define ".g:sign_thumb_name." text=".g:scrollbar_thumb." texthl=Scrollbar_Thumb"
 
 " Set up a default mapping to toggle the scrollbar (but only if user hasn't
 " already done it). Default is <leader>sb.
@@ -66,7 +63,17 @@ function! ToggleScrollbar()
         augroup END
 
         " Remove all signs that have been set.
-        :sign unplace *
+        let buffer_number=bufnr("%")
+        let total_lines=line('$')
+        let line = 1
+        while line <= total_lines
+            if b:bar_cache[line] == 1
+                exec ":sign unplace ".line." buffer=" . buffer_number
+            endif
+            let line += 1
+        endwhile
+        exec ":sign unplace ".total_lines." buffer=" . buffer_number
+        let b:bar_cache = []
     else
         " Toggle to active. Setup the scrollbar.
         let b:scrollbar_active=1
@@ -136,19 +143,14 @@ function! <sid>showScrollbar()
         if buffer_line >= tumb_start && buffer_line <= tumb_end
             call add(scrollbar, 1)
         else
-            call add(scrollbar, 0)
+            call add(scrollbar, -1)
         endif
-        let buffer_line=buffer_line+1
+        let buffer_line+=1
     endwhile
 
     let invalidate_cache = !exists('b:bar_cache') || total_lines+1 != len(b:bar_cache)
     if invalidate_cache
-        let b:bar_cache = []
-        let line = 0
-        while line <= total_lines
-            let line=line+1
-            call add(b:bar_cache, -1)
-        endwhile
+        call InitCache()
     endif
 
     let bar_line = 0
@@ -157,16 +159,49 @@ function! <sid>showScrollbar()
         let miss_cache = scrollbar[bar_line] != get(b:bar_cache, line_num, -1)
         if miss_cache
             if scrollbar[bar_line] == 1
-                exec ":sign place 1 line=".line_num." name=sbthumb buffer=".buffer_number
+                exec ":sign place ".line_num." line=".line_num." name=".g:sign_thumb_name." buffer=".buffer_number
             else
-                exec ":sign place 1 line=".line_num." name=sbclear buffer=".buffer_number
+                exec ":sign unplace ".line_num." buffer=".buffer_number
             endif
         endif
-        let bar_line=bar_line+1
+        let bar_line += 1
     endwhile
 
     let b:bar_cache = b:bar_cache[:buffer_top-1] + scrollbar + b:bar_cache[buffer_bottom+1:]
 
+endfunction
+
+function! InitCache() abort
+  let our_signs = []
+  let other_signs = []
+  let buffer_number=bufnr("%")
+  let total_lines=line('$')
+  let b:bar_cache = []
+  let line = 0
+  while line <= total_lines
+      let line+=1
+      call add(b:bar_cache, -1)
+  endwhile
+
+  redir => signs
+    silent exec ":sign place buffer=".bufnr("%")
+  redir END
+
+  for sign_line in filter(split(signs, '\n')[2:], 'v:val =~# "="')
+    " Typical sign line:  line=88 id=1234 name=ScrollbarThumb
+    let components  = split(sign_line)
+    let line        = str2nr(split(components[0], '=')[1])
+    let id          = str2nr(split(components[1], '=')[1])
+    let name        =        split(components[2], '=')[1]
+    if name =~# 'ScrollbarThumb'
+      if line != total_lines
+          exec ":sign unplace ".id." buffer=".buffer_number
+      endif
+      let b:bar_cache[line] = -1
+    endif
+  endfor
+  " set one of the list line to avoid bar blinks on unplace
+  exec ":sign place ".total_lines." line=".total_lines." name=".g:sign_thumb_name." buffer=".buffer_number
 endfunction
 
 " Call setup if vars are set for 'active' scrollbar.

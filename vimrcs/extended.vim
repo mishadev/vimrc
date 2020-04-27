@@ -221,6 +221,6 @@ hi Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
 hi Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
 
 hi DiffAdd     ctermfg=none ctermbg=4 guifg=none guibg=green cterm=none
-hi DiffChange  ctermfg=none ctermbg=4 guifg=none guibg=green cterm=none
+hi DiffChange  ctermfg=none ctermbg=3 guifg=none guibg=yellow cterm=none
 hi DiffText    ctermfg=none ctermbg=5 guifg=none guibg=red cterm=none
 hi DiffDelete  ctermfg=none ctermbg=5 guifg=none guibg=red cterm=none
