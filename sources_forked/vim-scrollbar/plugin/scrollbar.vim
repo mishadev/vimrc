@@ -1,4 +1,5 @@
 " Vim global plugin to display a curses scrollbar
+"
 " Version:              0.2.1
 " Last Change:          2016 Jun 05
 " Initial Author:       Loni Nix <lornix@lornix.com>
@@ -32,8 +33,8 @@ highlight Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
 highlight Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
 
 " Set signs we're goint to use. http://vimdoc.sourceforge.net/htmldoc/sign.html
-exec "sign define sbclear text=".g:scrollbar_clear." texthl=Scrollbar_Clear"
-exec "sign define sbthumb text=".g:scrollbar_thumb." texthl=Scrollbar_Thumb"
+exec "sign define ScrollbarClear text=".g:scrollbar_clear." texthl=Scrollbar_Clear"
+exec "sign define ScrollbarThumb text=".g:scrollbar_thumb." texthl=Scrollbar_Thumb"
 
 " Set up a default mapping to toggle the scrollbar (but only if user hasn't
 " already done it). Default is <leader>sb.
@@ -64,14 +65,41 @@ function! ToggleScrollbar()
         augroup Scrollbar_augroup
             autocmd!
         augroup END
-
-        " Remove all signs that have been set.
-        :sign unplace *
+        call ClearSings()
     else
         " Toggle to active. Setup the scrollbar.
         let b:scrollbar_active=1
+
         call <sid>SetupScrollbar()
     endif
+endfunction
+
+function! ClearSings()
+    " Remove all signs that have been set.
+    let buffer_number=bufnr("%")
+
+    redir => signs
+        silent exec ":sign place buffer=".buffer_number
+    redir END
+
+    let calls = []
+    for sign_line in filter(split(signs, '\n')[2:], 'v:val =~# "="')
+        " Typical sign line:  line=88 id=1234 name=ScrollbarThumb
+        let components  = split(sign_line)
+        let line        = str2nr(split(components[0], '=')[1])
+        let id          = str2nr(split(components[1], '=')[1])
+        let name        =        split(components[2], '=')[1]
+        let is_thumb = name =~# 'ScrollbarThumb'
+        let is_clear = name =~# 'ScrollbarClear'
+        let is_ours = is_thumb || is_clear
+        if is_ours
+            exec ":sign unplace ".id." buffer=".buffer_number
+        endif
+    endfor
+    echo calls
+
+    let b:bar_cache = []
+    let b:buffer_top=-1
 endfunction
 
 " Set up autocmds to react to user input.
@@ -104,6 +132,7 @@ function! <sid>showScrollbar()
     " Last line visible in the current window. (at bottom of the buffer).
     let buffer_bottom=line('w$')
     " Text height.
+    "
     let buffer_size=buffer_bottom-buffer_top
 
     " If the window height is the same or greater than the total # of lines, we
@@ -123,6 +152,11 @@ function! <sid>showScrollbar()
         let b:buffer_bottom=buffer_bottom
     endif
 
+    let invalid_cache = !exists('b:bar_cache') || total_lines+2 != len(b:bar_cache)
+    if invalid_cache
+        call InitCache()
+    endif
+
     " How much padding at the top and bottom to give the scrollbar.
     let offset_top = floor(buffer_top*1.0/total_lines*buffer_size)
     let tumb_size = ceil(buffer_size*1.0/total_lines*buffer_size)
@@ -138,34 +172,75 @@ function! <sid>showScrollbar()
         else
             call add(scrollbar, 0)
         endif
-        let buffer_line=buffer_line+1
+        let buffer_line+=1
     endwhile
-
-    let invalidate_cache = !exists('b:bar_cache') || total_lines+1 != len(b:bar_cache)
-    if invalidate_cache
-        let b:bar_cache = []
-        let line = 0
-        while line <= total_lines
-            let line=line+1
-            call add(b:bar_cache, -1)
-        endwhile
-    endif
 
     let bar_line = 0
+    " let calls = []
+    "
+    "
     while bar_line < len(scrollbar)
         let line_num = (bar_line+buffer_top)
-        let miss_cache = scrollbar[bar_line] != get(b:bar_cache, line_num, -1)
-        if miss_cache
-            if scrollbar[bar_line] == 1
-                exec ":sign place 1 line=".line_num." name=sbthumb buffer=".buffer_number
-            else
-                exec ":sign place 1 line=".line_num." name=sbclear buffer=".buffer_number
-            endif
+        let cached_sign = get(b:bar_cache, line_num, -1)
+        let other_sign = cached_sign == 2
+        if other_sign
+            let scrollbar[bar_line] = cached_sign
         endif
-        let bar_line=bar_line+1
+        let miss_cache = scrollbar[bar_line] != cached_sign
+        if miss_cache && !other_sign
+            " call add(calls, [line_num, scrollbar[bar_line]])
+            if scrollbar[bar_line] == 1
+                exec ":sign place ".line_num." line=".line_num." name=ScrollbarThumb buffer=".buffer_number
+            else
+                exec ":sign place ".line_num." line=".line_num." name=ScrollbarClear buffer=".buffer_number
+            endif
+            let b:bar_cache[line_num] = scrollbar[bar_line]
+        endif
+        let bar_line+=1
     endwhile
 
-    let b:bar_cache = b:bar_cache[:buffer_top-1] + scrollbar + b:bar_cache[buffer_bottom+1:]
+    " echo calls
+
+endfunction
+
+function! InitCache() abort
+  let buffer_number=bufnr("%")
+  let total_lines=line('$')
+  let b:bar_cache = []
+  let line = 0
+  while line <= total_lines+1
+      call add(b:bar_cache, -1)
+      let line+=1
+  endwhile
+
+  redir => signs
+    silent exec ":sign place buffer=".buffer_number
+  redir END
+
+  let calls = []
+  for sign_line in filter(split(signs, '\n')[2:], 'v:val =~# "="')
+    " Typical sign line:  line=88 id=1234 name=ScrollbarThumb
+    let components  = split(sign_line)
+    let line        = str2nr(split(components[0], '=')[1])
+    let id          = str2nr(split(components[1], '=')[1])
+    let name        =        split(components[2], '=')[1]
+    let is_thumb = name =~# 'ScrollbarThumb'
+    let is_clear = name =~# 'ScrollbarClear'
+    let is_ours = is_thumb || is_clear
+    if is_ours
+        if is_thumb
+            let b:bar_cache[line] = 1
+        elseif is_clear
+            let b:bar_cache[line] = 0
+        endif
+    else
+      let b:bar_cache[line] = 2
+    endif
+  endfor
+  echo calls
+
+
+
 
 endfunction
 
@@ -174,6 +249,7 @@ endfunction
 if g:scrollbar_active != 0
     call <sid>SetupScrollbar()
 endif
+"
 "
 " Restore cpoptions.
 let &cpoptions=s:save_cpoptions
