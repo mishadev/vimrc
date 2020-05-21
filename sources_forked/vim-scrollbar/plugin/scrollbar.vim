@@ -82,7 +82,7 @@ function! ClearSings()
         silent exec ":sign place buffer=".buffer_number
     redir END
 
-    let calls = []
+    " let calls = []
     for sign_line in filter(split(signs, '\n')[2:], 'v:val =~# "="')
         " Typical sign line:  line=88 id=1234 name=ScrollbarThumb
         let components  = split(sign_line)
@@ -96,7 +96,7 @@ function! ClearSings()
             exec ":sign unplace ".id." buffer=".buffer_number
         endif
     endfor
-    echo calls
+    " echo calls
 
     let b:bar_cache = []
     let b:buffer_top=-1
@@ -217,31 +217,29 @@ function! InitCache() abort
     silent exec ":sign place buffer=".buffer_number
   redir END
 
-  let calls = []
+  " let calls = []
   for sign_line in filter(split(signs, '\n')[2:], 'v:val =~# "="')
     " Typical sign line:  line=88 id=1234 name=ScrollbarThumb
     let components  = split(sign_line)
     let line        = str2nr(split(components[0], '=')[1])
     let id          = str2nr(split(components[1], '=')[1])
     let name        =        split(components[2], '=')[1]
-    let is_thumb = name =~# 'ScrollbarThumb'
-    let is_clear = name =~# 'ScrollbarClear'
-    let is_ours = is_thumb || is_clear
-    if is_ours
-        if is_thumb
-            let b:bar_cache[line] = 1
-        elseif is_clear
-            let b:bar_cache[line] = 0
+    if line < len(b:bar_cache)
+        let is_thumb = name =~# 'ScrollbarThumb'
+        let is_clear = name =~# 'ScrollbarClear'
+        let is_ours = is_thumb || is_clear
+        if is_ours
+            if is_thumb
+                let b:bar_cache[line] = 1
+            elseif is_clear
+                let b:bar_cache[line] = 0
+            endif
+        else
+          let b:bar_cache[line] = 2
         endif
-    else
-      let b:bar_cache[line] = 2
     endif
   endfor
-  echo calls
-
-
-
-
+  " echo calls
 endfunction
 
 " Call setup if vars are set for 'active' scrollbar.

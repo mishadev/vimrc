@@ -222,3 +222,7 @@ hi Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
 
 set colorcolumn=121,501,1001,1501
 hi ColorColumn ctermbg=0
+
+autocmd BufNewFile,BufRead *.pm.tp set syntax=html
+autocmd BufNewFile,BufRead *.tp set syntax=html
+autocmd BufNewFile,BufRead *.template set syntax=html
