@@ -165,8 +165,8 @@ nnoremap <silent> <leader>c :call SyntasticCheckCoffeescript()<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Git gutter (Git diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:gitgutter_enabled=0
-let g:gitgutter_signs=1
-let g:gitgutter_highlight_lines=0
+let g:gitgutter_enabled=1
+let g:gitgutter_signs=0
+let g:gitgutter_highlight_lines=1
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
