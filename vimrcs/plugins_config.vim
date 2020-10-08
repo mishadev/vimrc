@@ -170,3 +170,7 @@ let g:gitgutter_signs=0
 let g:gitgutter_highlight_lines=1
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Git blame
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
