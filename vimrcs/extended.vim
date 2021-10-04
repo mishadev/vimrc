@@ -213,8 +213,7 @@ set foldlevelstart=20
 set number
 " set relativenumber
 
-vnoremap <C-C> :w !xsel -i -b<CR><CR>
-vnoremap <C-V> :r !xsel -o -b<CR><CR>
+vnoremap <C-C> "+y
 noremap <silent> <Leader>r :so $MYVIMRC<CR>
 
 hi Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
