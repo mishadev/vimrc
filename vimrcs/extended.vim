@@ -177,7 +177,7 @@ map <ALT-h> <C-d>
 map <ALT-k> <C-u>
 inoremap <Nul> <C-n>
 
-set pastetoggle=<Leader>v
+set pastetoggle=<F3>
 
 set nolist
 set listchars=tab:>-,trail:~,extends:>,precedes:<,space:·
@@ -209,7 +209,8 @@ nnoremap <Leader>c :set cursorline!<CR>
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
 set nowrap
-set foldlevelstart=20
+set foldlevel=20
+set nofoldenable
 set number
 " set relativenumber
 
@@ -218,6 +219,7 @@ noremap <silent> <Leader>r :so $MYVIMRC<CR>
 
 hi Scrollbar_Clear ctermfg=8 ctermbg=8 guifg=green guibg=black cterm=none
 hi Scrollbar_Thumb ctermfg=0 ctermbg=0 guifg=darkgreen guibg=black cterm=reverse
+hi Folded ctermfg=235 ctermbg=249 guifg=darkgreen guibg=darkgreen cterm=reverse
 
 set colorcolumn=121,501,1001,1501
 hi ColorColumn ctermbg=0
