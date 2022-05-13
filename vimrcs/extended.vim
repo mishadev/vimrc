@@ -227,3 +227,5 @@ hi ColorColumn ctermbg=0
 autocmd BufNewFile,BufRead *.pm.tp set syntax=html
 autocmd BufNewFile,BufRead *.tp set syntax=html
 autocmd BufNewFile,BufRead *.template set syntax=html
+
+nnoremap <C-j> vj0whx
