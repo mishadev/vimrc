@@ -234,4 +234,6 @@ autocmd BufNewFile,BufRead *.pm.tp set syntax=html
 autocmd BufNewFile,BufRead *.tp set syntax=html
 autocmd BufNewFile,BufRead *.template set syntax=html
 
-nnoremap <C-j> vj0whx
+autocmd BufNewFile,BufRead *.toml.tpl set syntax=yaml
+
+nnoremap <C-j> :normal! J:s/^\s*//<CR>

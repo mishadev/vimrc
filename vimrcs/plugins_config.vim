@@ -55,6 +55,15 @@ let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 " Enable all functions in all modes
 let g:user_zen_mode='a'
 
+""""""""""""""""""""""""""""""
+" => EditorConfig
+""""""""""""""""""""""""""""""
+function! ApplyEditorConfigSettings()
+    " This command will reload .editorconfig settings
+    silent! EditorConfigReload
+endfunction
+autocmd OptionSet paste if &paste | call ApplyEditorConfigSettings() | endif
+
 
 """"""""""""""""""""""""""""""
 " => snipMate (beside <TAB> support <CTRL-j>)
